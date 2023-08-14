@@ -31,3 +31,8 @@ build:
 
 docker build -t simpleapp .
 docker run simpleapp
+
+to find out the output file: (important)
+sudo find / -name date.out
+
+sudo tail /var/lib/docker/overlay2/57ceced953abca054b768804f21c8d90ef2c44eaf4776353e9004615269e2e0f/diff/date.out
