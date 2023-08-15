@@ -34,6 +34,9 @@ kubectl get namespaces
 kubectl get pod -n kube-system
 kubectl get pod --all-namespaces
 kubectl get deploy,rs,po,svc,ep
+
+kubectl delete rs firstpod-6bb4574d94-rqk76
+kubectl delete deployment firstpod
 -----------------------------------------------------------
 curl -I https://registry-1.docker.io/v2/ check connectivity to the docker registry
 
