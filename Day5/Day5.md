@@ -54,7 +54,12 @@ After that:
 curl 10.97.40.62:5000/v2/_catalog
 {"repositories":["simpleapp"]}
 
+kubectl create deployment try1 --image=$repo/simpleapp
+kubectl scale deployment try1 --replicas=6
+alias dpush="docker push 10.97.40.62:5000"
+alias dpull="docker pull 10.97.40.62:5000"
 
+kubectl delete deployment try1
 
 check valid json -----> cat /etc/docker/daemon.json | jq 
 
@@ -240,3 +245,29 @@ items:
 kind: List
 metadata: {}
 
+----------------------------------------------------------------------
+
+Update: 
+
+While playing with docker registry I broke the cluster!! Nothing is running and debugging right now. 
+sudo systemctl restart kubelet
+sudo systemctl status kubelet
+
+<pre> kubelet.service - kubelet: The Kubernetes Node Agent
+     Loaded: loaded (/lib/systemd/system/kubelet.service; enabled; vendor preset: enabled)
+    Drop-In: /etc/systemd/system/kubelet.service.d
+             └─10-kubeadm.conf
+     Active: activating (auto-restart) (Result: exit-code) since Wed 2023-08-16 21:30:12 UTC; 6s ago
+       Docs: https://kubernetes.io/docs/home/
+    Process: 2497 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS (code=exited, status=1/FAILURE)
+   Main PID: 2497 (code=exited, status=1/FAILURE)
+</pre>
+
+sudo journalctl -u kubelet -n 500 --no-pager
+sudo nano /lib/systemd/system/kubelet.service
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+
+Q: Is it easier to reinstall from scratch or try to fix the broken one ? 
+A: I am extra motivated to fix the broken things so lets try this tonight, tomorrow might want to reinstall as the time is really short...
