@@ -10,7 +10,8 @@ kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube
 
 IMPORTANT: Docker installation steps: https://forum.linuxfoundation.org/discussion/862825/kubeadm-init-error-cri-v1-runtime-api-is-not-implemented
 
-in the worker node: sudo kubeadm join 172.31.44.164:6443 --token ll2j5a.a9he0y0g4uop1in3 --discovery-token-ca-cert-hash sha256:6b46ce99a0a7161e266bb953ff860c8152f89da3d8fcff9c89275ae1039fdf46
+in the worker node: sudo kubeadm join 172.31.44.164:6443 --token ll2j5a.a9he0y0g4uop1in3 --discovery-token-ca-cert-hash sha256:6b46ce99a0a7161e266bb953ff860c8152f89da3d8fcff9c89275ae1039fdf46 (changed)
+
 
 ### Links
 Cluster installation guide for Ubuntu 20.04:  https://medium.com/@mehmetodabashi/installing-kubernetes-on-ubuntu-20-04-e49c43c63d0c

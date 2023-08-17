@@ -268,6 +268,100 @@ sudo nano /lib/systemd/system/kubelet.service
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
+sudo systemctl status docker
+etcdctl cluster-health
+systemctl status containerd   # If you're using containerd
+
+
+cluster may be unhealthy: failed to list members
+Error:  client: etcd cluster is unavailable or misconfigured; error #0: dial tcp 127.0.0.1:4001: connect: connection refused
+; error #1: dial tcp 127.0.0.1:2379: connect: connection refused
+
+error #0: dial tcp 127.0.0.1:4001: connect: connection refused
+error #1: dial tcp 127.0.0.1:2379: connect: connection refused
+
 
 Q: Is it easier to reinstall from scratch or try to fix the broken one ? 
 A: I am extra motivated to fix the broken things so lets try this tonight, tomorrow might want to reinstall as the time is really short...
+
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/
+
+sudo kubeadm reset
+sudo apt-get purge kubelet kubeadm kubectl
+sudo rm -rf /etc/kubernetes/
+sudo rm -rf /var/lib/kubelet/
+sudo rm -rf /var/lib/kubeadm/
+
+sudo rm -rf /etc/kubernetes/
+sudo rm -rf /var/lib/kubelet/
+sudo apt-get autoremove
+sudo apt-get clean
+
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+## reinstall
+sudo apt-get install -y kubectl kubeadm kubelet kubernetes-cni 
+-- docker is installed
+
+sudo kubeadm config images pull
+
+echo ‘{“exec-opts”: [“native.cgroupdriver=systemd”]}’ | sudo tee /etc/docker/daemon.json (This is wrong!! )
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+sudo systemctl restart kubelet
+
+----------------------------------------------
+Failed to correct the system manually by deleting files, found an way to reset to the original state.
+
+Go to the EC2 Dashboard -> Instances
+Select the instance you want to reset.
+Hit the dropdown menu for "Actions" -> "Monitor and troubleshoot" -> "Replace root volume"
+
+HOLD
+sudo apt-mark hold kubeadm kubelet kubectl
+
+FIXES:
+ls -l /var/lib/kubelet/config.yaml
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+https://stackoverflow.com/questions/62407918/kubelet-service-is-not-starting
+
+
+kubelet was not running because the kubeadm init was not done correctly and the swap settings were not off. 
+
+kubeadm join 172.31.43.209:6443 --token 6wbhkm.ecnzqumh5pnf9uim \
+	--discovery-token-ca-cert-hash sha256:1b1a3c18d608ae68202317494e7be809793ed7d4905d8af43480d3c7616c20fb
+
+
+-----------------------------------------------------------------------
+Control plane is working i need to align the worker node to the new control plane
+
+kubectl drain worker1 --ignore-daemonsets (Did not work)
+kubectl delete node cp (Did not work)
+sudo kubeadm reset
+
+<pre>
+W0817 12:37:00.240165    1975 preflight.go:56] [reset] WARNING: Changes made to this host by 'kubeadm init' or 'kubeadm join' will be reverted.
+[reset] Are you sure you want to proceed? [y/N]: y
+[preflight] Running pre-flight checks
+W0817 12:37:04.452002    1975 removeetcdmember.go:106] [reset] No kubeadm config, using etcd pod spec to get data directory
+[reset] Deleted contents of the etcd data directory: /var/lib/etcd
+[reset] Stopping the kubelet service
+[reset] Unmounting mounted directories in "/var/lib/kubelet"
+[reset] Deleting contents of directories: [/etc/kubernetes/manifests /var/lib/kubelet /etc/kubernetes/pki]
+[reset] Deleting files: [/etc/kubernetes/admin.conf /etc/kubernetes/kubelet.conf /etc/kubernetes/bootstrap-kubelet.conf /etc/kubernetes/controller-manager.conf /etc/kubernetes/scheduler.conf]
+
+The reset process does not clean CNI configuration. To do so, you must remove /etc/cni/net.d
+
+The reset process does not reset or clean up iptables rules or IPVS tables.
+If you wish to reset iptables, you must do so manually by using the "iptables" command.
+
+If your cluster was setup to utilize IPVS, run ipvsadm --clear (or similar)
+to reset your system's IPVS tables.
+
+The reset process does not clean your kubeconfig files and you must remove them manually.
+Please, check the contents of the $HOME/.kube/config file.
+</pre>
