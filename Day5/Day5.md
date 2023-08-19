@@ -335,6 +335,7 @@ kubelet was not running because the kubeadm init was not done correctly and the 
 kubeadm join 172.31.43.209:6443 --token 6wbhkm.ecnzqumh5pnf9uim \
 	--discovery-token-ca-cert-hash sha256:1b1a3c18d608ae68202317494e7be809793ed7d4905d8af43480d3c7616c20fb
 
+sudo kubeadm join 172.31.43.209:6443 --token 6wbhkm.ecnzqumh5pnf9uim --discovery-token-ca-cert-hash sha256:1b1a3c18d608ae68202317494e7be809793ed7d4905d8af43480d3c7616c20fb
 
 -----------------------------------------------------------------------
 Control plane is working i need to align the worker node to the new control plane
@@ -365,3 +366,78 @@ to reset your system's IPVS tables.
 The reset process does not clean your kubeconfig files and you must remove them manually.
 Please, check the contents of the $HOME/.kube/config file.
 </pre>
+
+kubectl config get-contexts
+
+level 6 with more debug infos
+kubectl get pods -v6
+
+export KUBECONFIG=/etc/kubernetes/kubelet.conf
+
+DEBUG Notes:
+
+curl -k https://<API_SERVER_IP>:6443
+
+Replace <API_SERVER_IP> with the IP address of your control-plane node. You should get a response that says "Unauthorized" (which is expected, as we didn't provide any credentials), but it means the API server is reachable.
+
+problem: error: error loading config file "/home/ubuntu/kubelet.conf": open /home/ubuntu/kubelet.conf: permission denied
+Solution: sudo chmod a+r /home/ubuntu/kubelet.conf
+
+scp root@<control-plane-host>:/etc/kubernetes/admin.conf .
+kubectl --kubeconfig ./admin.conf get nodes
+
+NOTE:
+
+I copied the certificates and keys into ~/.kube and gave permission using chmod 644 ... The kubelet.conf needed to be updated to the path of the .kube
+
+## Back on track with exercise 3.1
+curl -fsSL -o podman-linux-amd64.tar.gz https://github.com/mgoltzsche/podman-static/releases/latest/download/podman-linux-amd64.tar.gz
+/app1$ tar -xf podman-linux-amd64.tar.gz
+/app1$ sudo cp -r podman-linux-amd64/usr podman-linux-amd64/etc /
+sudo podman build -t simpleapp .
+sudo podman images
+sudo podman run localhost/simpleapp
+sudo find / -name date.out
+sudo tail /var/lib/containers/storage/overlay/0cf7fea207a3106a1489e88046b1b58d95d5ed9c399ce7e0bc2decd8a0c8d8d9/diff/date.out
+
+## Exercise 3.2
+kubectl get svc | grep registry
+curl 10.97.40.62:5000/v2/_catalog
+
+find $HOME -name local-repo-setup.sh
+cp /home/ubuntu/app1/local-repo-setup.sh $HOME
+chmod +x $HOME/local-repo-setup.s
+. $HOME/local-repo-setup.sh
+sudo podman pull docker.io/library/alpine
+sudo podman tag alpine $repo/tagtest     (echo $repo => 10.97.40.62:5000)
+sudo podman push $repo/tagtest
+sudo podman image rm alpine
+sudo podman image rm $repo/tagtest
+sudo podman pull $repo/tagtest
+
+sudo podman tag simpleapp $repo/simpleapp
+sudo podman push $repo/simpleapp
+kubectl create deployment try1 --image=$repo/simpleapp
+kubectl scale deployment try1 --replicas=6
+
+NOTE: this command also shows which node is the pod running on
+kubectl get pod -o wide 
+
+kubectl get deployment try1 -o yaml > simpleapp.yaml
+kubectl delete deployment try1
+kubectl create -f simpleapp.yaml
+
+worker node setup:
+sudo crictl config --set runtime-endpoint=unix:///run/containerd/containerd.sock --set image-endpoint=unix:///run/containerd/containerd.sock
+sudo crictl ps | grep simple
+
+## Exercise 3.3
+
+kubectl create -f simpleapp-edited.yaml
+kubectl get pods
+
+kubectl exec  -it try1-9869bdb88-rtchc -- /bin/bash
+touch /tmp/healthy
+exit
+
+student@cp: ̃$ for name in try1-9869bdb88-2wfnr try1-9869bdb88-6bknl \> try1-9869bdb88-786v8 try1-9869bdb88-gmvs4 try1-9869bdb88-lfvlx> do> kubectl exec $name -- touch /tmp/healthy> done
