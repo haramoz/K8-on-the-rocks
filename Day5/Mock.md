@@ -78,4 +78,6 @@ To fix a error in the replicaset they corrected the replicaset yaml first, then 
 <pre> k delete pod -l name=busybox-pod </pre>
 
 
-
+### Edit
+saves the current config in test file
+kubectl get pod <pod-name> -o yaml > pod-definition.yaml
