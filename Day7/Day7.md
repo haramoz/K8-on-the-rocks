@@ -42,3 +42,15 @@ k get netpol
 ## General
 
 k get pod --show-labels
+
+## Cron job alternative
+Amazon EC2 with cron:
+
+If you're using an EC2 instance:
+
+You can simply set up a cron job in the EC2 instance to run your script daily at 10 am.
+Steps:
+
+SSH into your EC2 instance.
+Open the crontab using crontab -e.
+Add your job: 0 10 * * * /path/to/your/script.
