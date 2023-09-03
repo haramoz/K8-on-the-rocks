@@ -14,3 +14,5 @@ A: skopeo inspect docker-archive:./test-goal-oci.tar
 -Rollout undo to last version
 -canary deployment with restrictions of max 10 pods and 40% flow to canary
 -debug, having deployment issues with serviceaccounts not being accessible
+- node affinity
+- DEBUG: host name was missing
