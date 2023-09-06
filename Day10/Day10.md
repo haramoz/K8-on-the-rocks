@@ -1,4 +1,4 @@
-# Preparion of Retake (in 2 Days):
+# Preparion :
 This proven to be the weakest point in my armour
 - Application Environment, Configuration and Security (25%)
 - Application Design and Build (20%)
@@ -16,6 +16,7 @@ add networkpolicy
 sidecar
 resources
 max surge
+cronjob
 
 
 ### Debug Secrets
