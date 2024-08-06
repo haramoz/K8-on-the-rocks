@@ -1,0 +1,48 @@
+# Network Policies
+Name:         payroll-policy
+Namespace:    default
+Created on:   2024-08-06 14:27:01 +0000 UTC
+Labels:       <none>
+Annotations:  <none>
+Spec:
+  PodSelector:     name=payroll
+  Allowing ingress traffic:
+    To Port: 8080/TCP
+    From:
+      PodSelector: name=internal
+  Not affecting egress traffic
+  Policy Types: Ingress
+
+  internal to payroll via ingress
+
+  - Network policies shortcut is netpol
+
+ # Job
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: neb-new-job
+  namespace: neptune      
+spec:
+  completions: 3          
+  parallelism: 2          
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:             
+        id: awesome-job   
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - sleep 2 && echo done
+        image: busybox:1.31.0
+        name: neb-new-job-container 
+        resources: {}
+      restartPolicy: Never
+status: {} 
+
+# 
