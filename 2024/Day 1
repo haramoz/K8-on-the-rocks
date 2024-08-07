@@ -45,4 +45,40 @@ spec:
       restartPolicy: Never
 status: {} 
 
-# 
+# Readiness Probe
+
+readinessProbe:                             # add
+      exec:                                     # add
+        command:                                # add
+        - sh                                    # add
+        - -c                                    # add
+        - cat /tmp/ready                        # add
+      initialDelaySeconds: 5                    # add
+      periodSeconds: 10                         # add
+
+# ConfigMap as volume mount
+
+# Service account
+
+# Sidecar
+
+# Docker / Podman
+
+  ➜ sudo docker push registry.killer.sh:5000/sun-cipher:latest
+  The push refers to repository [registry.killer.sh:5000/sun-cipher]
+
+  ➜ sudo docker push registry.killer.sh:5000/sun-cipher:v1-docker
+
+  ➜ cd /opt/course/11/image
+
+  ➜ podman build -t registry.killer.sh:5000/sun-cipher:v1-podman .
+
+  ➜ podman image ls
+
+  ➜ podman push registry.killer.sh:5000/sun-cipher:v1-podman
+
+  podman run -d --name sun-cipher registry.killer.sh:5000/sun-cipher:v1-podman
+
+  podman logs sun-cipher > /opt/course/11/logs
+
+# PVC / PV

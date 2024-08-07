@@ -14,12 +14,20 @@ I have exam in 15 days.
 Deployment
 Secret
 Rollout management
+PVC
+ConfigMaps
 ### Weakness
 ingress, egress
 cronjob / Job
 Docker
 maxsurge
 canary deployment
+sidecar
+environment variables
+memory allocation
+Service Account
+StorageClass
+reclaimPolicy
 
 ### This time will pass with 80%
 
