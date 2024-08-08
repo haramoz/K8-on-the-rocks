@@ -25,9 +25,10 @@ canary deployment
 sidecar
 environment variables
 memory allocation
-Service Account
+Service Account & RoleBindings
 StorageClass
 reclaimPolicy
+
 
 ### This time will pass with 80%
 

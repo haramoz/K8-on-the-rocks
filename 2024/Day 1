@@ -81,4 +81,7 @@ readinessProbe:                             # add
 
   podman logs sun-cipher > /opt/course/11/logs
 
-# PVC / PV
+# Curl a tmp pod
+
+k run tmp --restart=Never --rm -i --image=nginx:alpine -- curl -m 5 earth-3cc-web.earth:6363
+
