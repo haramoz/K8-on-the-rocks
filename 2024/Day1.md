@@ -1,0 +1,87 @@
+# Network Policies
+Name:         payroll-policy
+Namespace:    default
+Created on:   2024-08-06 14:27:01 +0000 UTC
+Labels:       <none>
+Annotations:  <none>
+Spec:
+  PodSelector:     name=payroll
+  Allowing ingress traffic:
+    To Port: 8080/TCP
+    From:
+      PodSelector: name=internal
+  Not affecting egress traffic
+  Policy Types: Ingress
+
+  internal to payroll via ingress
+
+  - Network policies shortcut is netpol
+
+ # Job
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: neb-new-job
+  namespace: neptune      
+spec:
+  completions: 3          
+  parallelism: 2          
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:             
+        id: awesome-job   
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - sleep 2 && echo done
+        image: busybox:1.31.0
+        name: neb-new-job-container 
+        resources: {}
+      restartPolicy: Never
+status: {} 
+
+# Readiness Probe
+
+readinessProbe:                             # add
+      exec:                                     # add
+        command:                                # add
+        - sh                                    # add
+        - -c                                    # add
+        - cat /tmp/ready                        # add
+      initialDelaySeconds: 5                    # add
+      periodSeconds: 10                         # add
+
+# ConfigMap as volume mount
+
+# Service account
+
+# Sidecar
+
+# Docker / Podman
+
+  ➜ sudo docker push registry.killer.sh:5000/sun-cipher:latest
+  The push refers to repository [registry.killer.sh:5000/sun-cipher]
+
+  ➜ sudo docker push registry.killer.sh:5000/sun-cipher:v1-docker
+
+  ➜ cd /opt/course/11/image
+
+  ➜ podman build -t registry.killer.sh:5000/sun-cipher:v1-podman .
+
+  ➜ podman image ls
+
+  ➜ podman push registry.killer.sh:5000/sun-cipher:v1-podman
+
+  podman run -d --name sun-cipher registry.killer.sh:5000/sun-cipher:v1-podman
+
+  podman logs sun-cipher > /opt/course/11/logs
+
+# Curl a tmp pod
+
+k run tmp --restart=Never --rm -i --image=nginx:alpine -- curl -m 5 earth-3cc-web.earth:6363
+
