@@ -1,0 +1,4 @@
+# Test Exams
+
+kubectl get nodes --show-labels
+kubectl label nodes <your-node-name> disktype=ssd
